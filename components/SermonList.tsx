@@ -1,6 +1,7 @@
-import Link from "next/link";
-import { formatDate, playerHref } from "@/lib/links";
+import { formatDate } from "@/lib/links";
+import { basicTrack } from "@/lib/track";
 import type { PlayContext, Sermon } from "@/lib/types";
+import PlayButton from "./PlayButton";
 
 /** Shared list used by the Archive and Search views. Rows expand (no JS) via <details>. */
 export default function SermonList({ sermons, ctx }: { sermons: Sermon[]; ctx: PlayContext }) {
@@ -27,19 +28,9 @@ export default function SermonList({ sermons, ctx }: { sermons: Sermon[]; ctx: P
               )}
             </dl>
           </details>
-          <Link href={playerHref(s.id, ctx)} className="play-btn" aria-label={`Play ${s.title}`}>
-            <PlayIcon />
-          </Link>
+          <PlayButton track={basicTrack(s, ctx)} />
         </li>
       ))}
     </ul>
-  );
-}
-
-function PlayIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden>
-      <path d="M8 5v14l11-7z" fill="currentColor" />
-    </svg>
   );
 }

@@ -74,6 +74,7 @@ details[open] .chevron { transform: rotate(90deg); }
 
 /* Player */
 .player { display: grid; gap: 20px; padding-top: 8px; }
+.player .page-sub { margin: 0; }
 .artwork {
   width: min(78vw, 320px); aspect-ratio: 1; margin: 0 auto; border-radius: 12px;
   background: linear-gradient(135deg, #1db954, #0b3d20 70%);
@@ -85,7 +86,7 @@ details[open] .chevron { transform: rotate(90deg); }
 .progress input { width: 100%; accent-color: var(--accent); }
 .times { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.8rem; }
 .controls { display: flex; align-items: center; justify-content: center; gap: 36px; }
-.skip { color: var(--text); display: grid; place-items: center; width: 48px; height: 48px; }
+.skip { color: var(--text); background: none; border: 0; padding: 0; cursor: pointer; display: grid; place-items: center; width: 48px; height: 48px; }
 .skip.disabled { opacity: 0.3; }
 .big-play {
   width: 72px; height: 72px; border-radius: 50%; border: 0; cursor: pointer;

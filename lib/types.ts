@@ -18,3 +18,14 @@ export interface SearchParams {
 
 /** Where the user pressed play, which decides what "next"/"previous" mean. */
 export type PlayContext = { kind: "archive" } | ({ kind: "search" } & SearchParams);
+
+/** Everything the client-side player needs to play one sermon. */
+export interface Track {
+  id: number;
+  title: string;
+  subtitle: string;
+  sources: string[]; // tried in order: audio_url, then Google Drive fallback
+  href: string; // this track's /player URL (includes the play context)
+  prevHref?: string;
+  nextHref?: string;
+}

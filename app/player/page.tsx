@@ -1,8 +1,8 @@
 import Link from "next/link";
-import AudioPlayer from "@/components/AudioPlayer";
-import { audioSources } from "@/lib/audio";
-import { getNeighbors, getSermon, listSermons } from "@/lib/db";
-import { formatDate, parsePlayContext, playerHref } from "@/lib/links";
+import PlayerView from "@/components/PlayerView";
+import { getSermon, listSermons } from "@/lib/db";
+import { parsePlayContext } from "@/lib/links";
+import { buildTrack } from "@/lib/track";
 
 export const dynamic = "force-dynamic";
 
@@ -11,11 +11,10 @@ type Props = { searchParams: Promise<Record<string, string | string[] | undefine
 export default async function PlayerPage({ searchParams }: Props) {
   const sp = await searchParams;
   const ctx = parsePlayContext(sp);
-  // With no id, default to the most recent sermon.
-  const id = Number(Array.isArray(sp.id) ? sp.id[0] : sp.id) || listSermons()[0]?.id;
-  const sermon = id ? getSermon(id) : undefined;
+  const rawId = Array.isArray(sp.id) ? sp.id[0] : sp.id;
+  const sermon = rawId ? getSermon(Number(rawId)) : undefined;
 
-  if (!sermon) {
+  if (rawId && !sermon) {
     return (
       <p className="empty">
         Sermon not found. <Link href="/">Back to the archive</Link>
@@ -23,22 +22,14 @@ export default async function PlayerPage({ searchParams }: Props) {
     );
   }
 
-  const { prev, next } = getNeighbors(sermon.id, ctx);
-  const subtitle = [formatDate(sermon.date), sermon.series].filter(Boolean).join(" · ");
+  // No id: the client shows whatever is loaded, falling back to the newest sermon.
+  const latest = listSermons()[0];
+  if (!sermon && !latest) return <p className="empty">No sermons yet.</p>;
 
   return (
-    <>
-      <p className="page-sub">
-        {ctx.kind === "search" ? "Playing from search results" : "Playing from the archive"}
-      </p>
-      <AudioPlayer
-        key={sermon.id}
-        title={sermon.title}
-        subtitle={subtitle}
-        sources={audioSources(sermon)}
-        prevHref={prev && playerHref(prev.id, ctx)}
-        nextHref={next && playerHref(next.id, ctx)}
-      />
-    </>
+    <PlayerView
+      track={sermon && buildTrack(sermon, ctx)}
+      fallback={buildTrack(sermon ?? latest, { kind: "archive" })}
+    />
   );
 }

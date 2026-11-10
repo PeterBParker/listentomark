@@ -20,7 +20,12 @@ Then open http://localhost:3000. (`just start` installs dependencies if they're 
   - Started from the Archive → previous/next are the chronologically older/newer sermon.
   - Started from Search → previous/next walk the same search results (`src=search&q=…&from=…&to=…`).
 
-All pages are server-rendered; only the player and tab bar ship client JS.
+Playback lives in the root layout (`components/PlayerProvider.tsx`), so audio keeps playing and keeps its
+position while you move between Archive, Search and Player. A sermon only starts on its own when you press ▶
+in a list; opening the Player tab (or using back/forward) never starts or restarts audio. When a sermon ends,
+the next one in the same archive/search order plays, even if you're on another page.
+
+All pages are server-rendered; the player, play buttons and tab bar are the only client components.
 
 ## Data
 

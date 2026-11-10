@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import NavBar from "@/components/NavBar";
+import PlayerProvider from "@/components/PlayerProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,8 +21,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="site-header">
           <span className="brand">Listen To Mark</span>
         </header>
-        <main>{children}</main>
-        <NavBar />
+        <PlayerProvider>
+          <main>{children}</main>
+          <NavBar />
+        </PlayerProvider>
       </body>
     </html>
   );

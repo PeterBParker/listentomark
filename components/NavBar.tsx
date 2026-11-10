@@ -1,19 +1,21 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const TABS = [
-  { href: "/", label: "Archive" },
-  { href: "/search", label: "Search" },
-  { href: "/player", label: "Player" },
-];
+import { usePlayer } from "./PlayerProvider";
 
 export default function NavBar() {
   const path = usePathname();
+  const { current, playing } = usePlayer();
+  const tabs = [
+    { href: "/", match: "/", label: "Archive" },
+    { href: "/search", match: "/search", label: "Search" },
+    // Return to whatever is loaded, keeping its archive/search context.
+    { href: current?.href ?? "/player", match: "/player", label: playing ? "▶ Playing" : "Player" },
+  ];
   return (
     <nav className="tabs">
-      {TABS.map((t) => (
-        <Link key={t.href} href={t.href} className={path === t.href ? "active" : undefined}>
+      {tabs.map((t) => (
+        <Link key={t.match} href={t.href} className={path === t.match ? "active" : undefined}>
           {t.label}
         </Link>
       ))}
