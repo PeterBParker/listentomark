@@ -48,20 +48,37 @@ main { max-width: 720px; margin: 0 auto; padding: 0 16px 32px; }
   letter-spacing: 0.005em; color: var(--text);
 }
 /* Photo in the empty top-right corner, beside the site name and page heading.
-   Absolutely positioned so it doesn't push the page down. */
+   Absolutely positioned so it doesn't push the page down. The button tilts
+   slowly the whole time; tapping wiggles the photo inside it on top of that
+   (components/HeaderPhoto.tsx), so the tilt never restarts. */
 .header-photo {
-  position: absolute; top: 10px; right: 16px; width: 66px; height: auto;
-  pointer-events: none; z-index: 1;
+  position: absolute; top: 10px; right: 16px; z-index: 1;
+  width: 66px; padding: 0; border: 0; background: none; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   transform-origin: 50% 90%; /* pivot near the chin, like tilting a head */
   animation: head-tilt 3.2s ease-in-out infinite alternate;
+}
+.header-photo img {
+  display: block; width: 100%; height: auto;
+  transform-origin: 50% 90%;
   filter: drop-shadow(0 4px 8px rgba(31, 27, 22, 0.12));
 }
+.header-photo img.wiggle { animation: head-wiggle 0.7s ease-in-out; }
 @keyframes head-tilt {
   from { transform: rotate(-6deg); }
   to { transform: rotate(6deg); }
 }
+@keyframes head-wiggle {
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(-14deg) scale(1.06); }
+  30% { transform: rotate(12deg) scale(1.06); }
+  45% { transform: rotate(-10deg) scale(1.04); }
+  60% { transform: rotate(7deg) scale(1.02); }
+  75% { transform: rotate(-4deg); }
+  90% { transform: rotate(2deg); }
+}
 @media (prefers-reduced-motion: reduce) {
-  .header-photo { animation: none; }
+  .header-photo, .header-photo img.wiggle { animation: none; }
 }
 .page-title {
   font-family: var(--font-serif); font-weight: 600; font-size: 2rem; line-height: 1.2;
