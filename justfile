@@ -2,9 +2,10 @@
 default:
     @just --list
 
-# Install dependencies (if needed) and run the app locally at http://localhost:3000
+# Install dependencies (if missing or changed) and run the app locally at http://localhost:3000
 start:
-    @[ -d node_modules ] || npm install
+    @node -e 'const [a,b]=process.versions.node.split(".").map(Number); if (a<22||(a===22&&b<13)) { console.error("Listen To Mark needs Node 22.13 or newer (found " + process.version + ")."); process.exit(1) }'
+    @[ node_modules/.package-lock.json -nt package-lock.json ] || npm install
     @[ -f data/sermons.db ] || npm run db:import
     npm run dev
 

@@ -2,7 +2,7 @@
 // Each JSON object becomes one row; column names are the JSON keys.
 // Rows are addressed by SQLite's built-in rowid (no extra column is added).
 // Usage: node scripts/import-sermons.mjs [input.json] [output.db]
-import Database from "better-sqlite3";
+import { DatabaseSync } from "node:sqlite";
 import { readFileSync, rmSync, existsSync } from "node:fs";
 import path from "node:path";
 
@@ -20,7 +20,7 @@ const columns = [];
 for (const s of sermons) for (const k of Object.keys(s)) if (!columns.includes(k)) columns.push(k);
 
 if (existsSync(output)) rmSync(output);
-const db = new Database(output);
+const db = new DatabaseSync(output);
 const quote = (c) => `"${c.replaceAll('"', '""')}"`;
 
 db.exec(
@@ -32,11 +32,11 @@ db.exec(
 
 const insert = db.prepare(
   `INSERT INTO sermons (${columns.map(quote).join(", ")})
-   VALUES (${columns.map((c) => "@" + c).join(", ")})`
+   VALUES (${columns.map(() => "?").join(", ")})`
 );
-db.transaction((rows) => {
-  for (const r of rows) insert.run(Object.fromEntries(columns.map((c) => [c, r[c] ?? null])));
-})(sermons);
+db.exec("BEGIN");
+for (const r of sermons) insert.run(...columns.map((c) => (r[c] == null ? null : String(r[c]))));
+db.exec("COMMIT");
 
 const { n } = db.prepare("SELECT COUNT(*) AS n FROM sermons").get();
 db.close();

@@ -1,5 +1,5 @@
 import "server-only";
-import Database from "better-sqlite3";
+import { DatabaseSync } from "node:sqlite";
 import Fuse from "fuse.js";
 import path from "node:path";
 import type { PlayContext, SearchParams, Sermon } from "./types";
@@ -7,21 +7,26 @@ import type { PlayContext, SearchParams, Sermon } from "./types";
 const DB_PATH = process.env.SERMONS_DB ?? path.join(process.cwd(), "data", "sermons.db");
 
 // Reuse one read-only connection across requests (and across dev hot reloads).
-const globalForDb = globalThis as unknown as { sermonsDb?: Database.Database };
-function db(): Database.Database {
-  globalForDb.sermonsDb ??= new Database(DB_PATH, { readonly: true, fileMustExist: true });
+// Uses Node's built-in SQLite (no native add-on to compile).
+const globalForDb = globalThis as unknown as { sermonsDb?: DatabaseSync };
+function db(): DatabaseSync {
+  globalForDb.sermonsDb ??= new DatabaseSync(DB_PATH, { readOnly: true });
   return globalForDb.sermonsDb;
 }
+
+// node:sqlite returns null-prototype rows; copy them into plain objects.
+const plain = (row: unknown) => ({ ...(row as Sermon) });
 
 const SELECT = "SELECT rowid AS id, file_name, date, title, series, speaker, page_url, audio_url FROM sermons";
 
 /** All sermons, newest first. */
 export function listSermons(): Sermon[] {
-  return db().prepare(`${SELECT} ORDER BY date DESC, rowid DESC`).all() as Sermon[];
+  return db().prepare(`${SELECT} ORDER BY date DESC, rowid DESC`).all().map(plain);
 }
 
 export function getSermon(id: number): Sermon | undefined {
-  return db().prepare(`${SELECT} WHERE rowid = ?`).get(id) as Sermon | undefined;
+  const row = db().prepare(`${SELECT} WHERE rowid = ?`).get(id);
+  return row ? plain(row) : undefined;
 }
 
 /**

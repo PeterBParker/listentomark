@@ -4,13 +4,13 @@ A mobile-friendly Next.js (TypeScript) app for browsing and playing sermons by D
 
 ## Run locally
 
-Requires Node 20+ and [`just`](https://github.com/casey/just).
+Requires Node 22.13+ (uses Node's built-in `node:sqlite`; no native modules to compile) and [`just`](https://github.com/casey/just).
 
 ```bash
 just start
 ```
 
-Then open http://localhost:3000. (`just start` installs dependencies and builds the database if they're missing.)
+Then open http://localhost:3000. (`just start` installs dependencies if they're missing or changed, and builds the database if it's missing.)
 
 ## Views
 
