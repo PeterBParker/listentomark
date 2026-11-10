@@ -118,10 +118,20 @@ details[open] .chevron { transform: rotate(90deg); color: var(--accent); }
 .search-form input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .date-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .date-row label {
-  display: grid; gap: 6px; color: var(--muted); font-size: 0.7rem; font-weight: 600;
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; color: var(--muted); font-size: 0.7rem; font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase;
 }
-.date-row input { text-transform: none; letter-spacing: normal; font-weight: 400; font-size: 1rem; }
+.date-row input {
+  text-transform: none; letter-spacing: normal; font-weight: 400; font-size: 1rem;
+  /* iOS Safari gives date fields a fixed native width that ignores width: 100%
+     until the native appearance is turned off. Without it, they overflow. */
+  -webkit-appearance: none; appearance: none;
+  display: block; width: 100%; min-width: 0; max-width: 100%;
+  height: 50px; /* matches the search box; empty date fields collapse on iOS otherwise */
+  text-align: left;
+}
+/* iOS centres the date text; keep it aligned with the other fields. */
+.date-row input::-webkit-date-and-time-value { text-align: left; margin: 0; }
 .search-form button {
   background: var(--accent); color: #fff; font-weight: 600; letter-spacing: 0.01em;
   border-color: var(--accent); cursor: pointer; transition: background 0.15s ease;
