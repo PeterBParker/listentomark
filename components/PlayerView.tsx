@@ -42,9 +42,6 @@ export default function PlayerView({ track: urlTrack, fallback }: { track?: Trac
       <p className="page-sub">
         {shown.href.includes("src=search") ? "Playing from search results" : "Playing from the archive"}
       </p>
-      <div className="artwork" aria-hidden>
-        <span>LTM</span>
-      </div>
       <div className="now-playing">
         <h1>{shown.title}</h1>
         <p>{shown.subtitle}</p>
@@ -69,6 +66,7 @@ export default function PlayerView({ track: urlTrack, fallback }: { track?: Trac
 
       <div className="controls">
         <SkipButton dir="prev" href={shown.prevHref} isCurrent={isCurrent} />
+        <JumpButton seconds={-15} disabled={!isCurrent} onJump={p.jump} />
         <button className="big-play" onClick={onPlayPause} aria-label={playing ? "Pause" : "Play"}>
           <svg viewBox="0 0 24 24" width="32" height="32" aria-hidden>
             {playing ? (
@@ -78,6 +76,7 @@ export default function PlayerView({ track: urlTrack, fallback }: { track?: Trac
             )}
           </svg>
         </button>
+        <JumpButton seconds={15} disabled={!isCurrent} onJump={p.jump} />
         <SkipButton dir="next" href={shown.nextHref} isCurrent={isCurrent} />
       </div>
 
@@ -115,5 +114,33 @@ function SkipButton({ dir, href, isCurrent }: { dir: "prev" | "next"; href?: str
     <Link href={href} className="skip" aria-label={label} replace>
       {icon}
     </Link>
+  );
+}
+
+/** Rewind / fast-forward by a fixed number of seconds: a circular arrow with the count inside. */
+function JumpButton({ seconds, disabled, onJump }: { seconds: number; disabled: boolean; onJump: (s: number) => void }) {
+  const back = seconds < 0;
+  const n = Math.abs(seconds);
+  const label = back ? `Rewind ${n} seconds` : `Fast forward ${n} seconds`;
+  return (
+    <button
+      className={disabled ? "skip disabled" : "skip"}
+      onClick={() => onJump(seconds)}
+      disabled={disabled}
+      aria-label={label}
+      title={label}
+    >
+      <svg viewBox="0 0 24 24" width="38" height="38" aria-hidden>
+        {/* Counter-clockwise arrow for rewind; mirrored for fast forward. */}
+        <path
+          d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"
+          fill="currentColor"
+          transform={back ? undefined : "matrix(-1 0 0 1 24 0)"}
+        />
+        <text x="12" y="16.2" textAnchor="middle" fontSize="7" fontWeight="700" fill="currentColor">
+          {n}
+        </text>
+      </svg>
+    </button>
   );
 }

@@ -17,6 +17,8 @@ interface PlayerState {
   updateCurrent: (track: Track) => void;
   toggle: () => void;
   seek: (t: number) => void;
+  /** Move forward (positive) or back (negative) by this many seconds. */
+  jump: (seconds: number) => void;
   skip: (dir: "prev" | "next") => void;
 }
 
@@ -120,6 +122,17 @@ export default function PlayerProvider({ children }: { children: React.ReactNode
     if (audio.current) audio.current.currentTime = t;
   }, []);
 
+  const jump = useCallback((seconds: number) => {
+    const el = audio.current;
+    if (!el) return;
+    // Stop 1s short of the end: landing exactly on it would count as finishing
+    // the sermon and auto-advance, even while paused.
+    const end = Number.isFinite(el.duration) ? Math.max(0, el.duration - 1) : Infinity;
+    const t = Math.max(0, Math.min(end, el.currentTime + seconds));
+    el.currentTime = t;
+    setTime(t); // update the display right away, even while paused
+  }, []);
+
   const skip = useCallback(
     async (dir: "prev" | "next", autoplay?: boolean) => {
       const href = dir === "prev" ? current?.prevHref : current?.nextHref;
@@ -157,6 +170,7 @@ export default function PlayerProvider({ children }: { children: React.ReactNode
     updateCurrent,
     toggle,
     seek,
+    jump,
     skip: (dir) => void skip(dir),
   };
 
