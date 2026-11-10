@@ -15,7 +15,8 @@ Then open http://localhost:3000. (`just start` installs dependencies if they're 
 ## Views
 
 - **Archive** (`/`) – every sermon, newest first. Tap a row to expand its metadata; tap ▶ to play.
-- **Search** (`/search`) – fuzzy search over title/series plus a From/To date filter.
+- **Search** (`/search`) – fuzzy search over title/series plus a From/To date filter. The Search tab returns to
+  your last search (remembered for the browser tab, including across refreshes).
 - **Player** (`/player?id=…`) – play/pause, seek bar, previous/next.
   - Started from the Archive → previous/next are the chronologically older/newer sermon.
   - Started from Search → previous/next walk the same search results (`src=search&q=…&from=…&to=…`).
