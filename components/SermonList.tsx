@@ -22,7 +22,6 @@ export default function SermonList({ sermons, ctx }: { sermons: Sermon[]; ctx: P
               {s.series && (<><dt>Series</dt><dd>{s.series}</dd></>)}
               {s.speaker && (<><dt>Speaker</dt><dd>{s.speaker}</dd></>)}
               <dt>Date</dt><dd>{s.date}</dd>
-              <dt>File</dt><dd className="mono">{s.file_name}</dd>
               {s.page_url && (
                 <><dt>Page</dt><dd><a href={s.page_url} target="_blank" rel="noreferrer">alliancechurch.org ↗</a></dd></>
               )}

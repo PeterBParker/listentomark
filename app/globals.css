@@ -55,7 +55,6 @@ details[open] .chevron { transform: rotate(90deg); }
 }
 .meta dt { color: var(--muted); }
 .meta dd { margin: 0; overflow-wrap: anywhere; }
-.mono { font-family: ui-monospace, monospace; font-size: 0.8rem; }
 .play-btn {
   flex: none; width: 44px; height: 44px; border-radius: 50%;
   display: grid; place-items: center; background: var(--accent); color: #000;
