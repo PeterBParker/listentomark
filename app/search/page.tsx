@@ -1,4 +1,5 @@
 import Form from "next/form";
+import DateField from "@/components/DateField";
 import RememberSearch from "@/components/RememberSearch";
 import SermonList from "@/components/SermonList";
 import { searchSermons } from "@/lib/db";
@@ -27,14 +28,10 @@ export default async function SearchPage({ searchParams }: Props) {
       <Form key={href} className="search-form" action="/search">
         <input type="search" name="q" defaultValue={params.q} placeholder="Titles, series…" autoComplete="off" />
         <div className="date-row">
-          <label>
-            From <input type="date" name="from" defaultValue={params.from} />
-          </label>
-          <label>
-            To <input type="date" name="to" defaultValue={params.to} />
-          </label>
+          <DateField name="from" label="From" defaultValue={params.from} />
+          <DateField name="to" label="To" defaultValue={params.to} />
         </div>
-        <button type="submit">Search</button>
+        <button type="submit" className="submit">Search</button>
       </Form>
       {hasQuery && (
         <>
