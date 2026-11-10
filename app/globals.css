@@ -110,33 +110,45 @@ details[open] .chevron { transform: rotate(90deg); color: var(--accent); }
 
 /* Search form */
 .search-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-bottom: 20px; }
-.search-form input, .search-form button {
+.search-form input[type="search"], .search-form .submit {
   font: inherit; color: var(--text); background: var(--surface);
   border: 1px solid var(--border-strong); border-radius: 10px; padding: 12px 14px; width: 100%; min-width: 0;
 }
-.search-form input::placeholder { color: #7f776a; }
-.search-form input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.date-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.date-row label {
-  display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; color: var(--muted); font-size: 0.7rem; font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase;
-}
-.date-row input {
-  text-transform: none; letter-spacing: normal; font-weight: 400; font-size: 1rem;
-  /* iOS Safari gives date fields a fixed native width that ignores width: 100%
-     until the native appearance is turned off. Without it, they overflow. */
-  -webkit-appearance: none; appearance: none;
-  display: block; width: 100%; min-width: 0; max-width: 100%;
-  height: 50px; /* matches the search box; empty date fields collapse on iOS otherwise */
-  text-align: left;
-}
-/* iOS centres the date text; keep it aligned with the other fields. */
-.date-row input::-webkit-date-and-time-value { text-align: left; margin: 0; }
-.search-form button {
+.search-form input[type="search"]::placeholder { color: #7f776a; }
+.search-form input[type="search"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.search-form .submit {
   background: var(--accent); color: #fff; font-weight: 600; letter-spacing: 0.01em;
   border-color: var(--accent); cursor: pointer; transition: background 0.15s ease;
 }
-.search-form button:hover { background: var(--accent-hover); }
+.search-form .submit:hover { background: var(--accent-hover); }
+
+/* Date filter (components/DateField.tsx): our own box with the native input
+   invisible on top, so iOS can't widen the layout. */
+.date-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.date-field { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; }
+.date-label { color: var(--muted); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.date-box {
+  position: relative; overflow: hidden; display: flex; align-items: center; gap: 8px;
+  height: 50px; padding: 0 14px; min-width: 0;
+  background: var(--surface); border: 1px solid var(--border-strong); border-radius: 10px;
+}
+.date-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.date-text { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.date-text.placeholder { color: #7f776a; }
+.date-icon { flex: none; color: var(--muted); }
+.date-native {
+  position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; border: 0;
+  opacity: 0; cursor: pointer; font-size: 16px; /* 16px stops iOS zooming in on focus */
+  -webkit-appearance: none; appearance: none; background: transparent; color: transparent;
+}
+/* Desktop Chrome: make the whole box open the calendar, not just its icon. */
+.date-native::-webkit-calendar-picker-indicator { position: absolute; inset: 0; width: auto; height: auto; margin: 0; opacity: 0; cursor: pointer; }
+.date-clear {
+  position: relative; z-index: 1; flex: none; display: grid; place-items: center;
+  width: 28px; height: 28px; margin-right: -6px; padding: 0; border: 0; border-radius: 50%;
+  background: var(--surface-sunk); color: var(--muted); cursor: pointer;
+}
+.date-clear:hover { color: var(--text); }
 
 /* Player */
 .player {

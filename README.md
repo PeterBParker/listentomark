@@ -12,6 +12,10 @@ just start
 
 Then open http://localhost:3000. (`just start` installs dependencies if they're missing or changed, and builds the database if it's missing.)
 
+To try it on a phone, open the "Network" address that `just start` prints (e.g. `http://192.168.1.20:3000`)
+with the phone on the same Wi-Fi. `next.config.ts` allows this computer's network addresses (and `*.local` names)
+so the dev server serves its JavaScript to the phone; without that, pages load but nothing interactive works.
+
 ## Views
 
 - **Archive** (`/`) – every sermon, newest first. Tap a row to expand its metadata; tap ▶ to play.
