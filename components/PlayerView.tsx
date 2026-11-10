@@ -39,9 +39,6 @@ export default function PlayerView({ track: urlTrack, fallback }: { track?: Trac
 
   return (
     <div className="player">
-      <p className="page-sub">
-        {shown.href.includes("src=search") ? "Playing from search results" : "Playing from the archive"}
-      </p>
       <div className="now-playing">
         <h1>{shown.title}</h1>
         <p>{shown.subtitle}</p>
