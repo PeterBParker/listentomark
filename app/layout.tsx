@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import BibleIcon from "@/components/BibleIcon";
 import NavBar from "@/components/NavBar";
 import PlayerProvider from "@/components/PlayerProvider";
 import "./globals.css";
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#121212",
+  themeColor: "#f8f6f1",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <header className="site-header">
+          <BibleIcon size={26} className="brand-icon" />
           <span className="brand">Listen To Mark</span>
         </header>
         <PlayerProvider>

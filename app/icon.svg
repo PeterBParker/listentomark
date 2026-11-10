@@ -1,0 +1,10 @@
+<!-- Favicon: Bible icon from Tabler Icons (MIT, (c) Paweł Kuna) on the app's burgundy. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#6e2533"/>
+  <g transform="translate(4 4)" fill="none" stroke="#f8f3ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 4v16h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12"/>
+    <path d="M19 16h-12a2 2 0 0 0 -2 2"/>
+    <path d="M12 7v6"/>
+    <path d="M10 9h4"/>
+  </g>
+</svg>
