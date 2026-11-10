@@ -2,7 +2,7 @@ import "server-only";
 import { DatabaseSync } from "node:sqlite";
 import Fuse from "fuse.js";
 import path from "node:path";
-import type { PlayContext, SearchParams, Sermon } from "./types";
+import type { PlayContext, Quote, SearchParams, Sermon } from "./types";
 
 const DB_PATH = process.env.SERMONS_DB ?? path.join(process.cwd(), "data", "sermons.db");
 
@@ -70,4 +70,14 @@ export function getNeighbors(id: number, ctx: PlayContext): { prev?: Sermon; nex
   const i = chrono.findIndex((s) => s.id === id);
   if (i === -1) return {};
   return { prev: chrono[i - 1], next: chrono[i + 1] };
+}
+
+/** A random row from the quotes table (undefined if there are none). */
+export function getRandomQuote(): Quote | undefined {
+  try {
+    const row = db().prepare("SELECT text, source, reason FROM quotes ORDER BY RANDOM() LIMIT 1").get();
+    return row ? { ...(row as unknown as Quote) } : undefined;
+  } catch {
+    return undefined; // e.g. a database built before the quotes table existed
+  }
 }

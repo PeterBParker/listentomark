@@ -8,7 +8,7 @@ import { useRef } from "react";
  * wiggle on top of it. Because the tilt is never interrupted, it carries on
  * from exactly where it was once the wiggle ends.
  */
-export default function HeaderPhoto() {
+export default function HeaderPhoto({ onTap }: { onTap?: () => void }) {
   const photo = useRef<HTMLImageElement>(null);
 
   const wiggle = () => {
@@ -17,6 +17,7 @@ export default function HeaderPhoto() {
     el.classList.remove("wiggle");
     void el.offsetWidth; // restart the animation if tapped again mid-wiggle
     el.classList.add("wiggle");
+    onTap?.();
   };
 
   return (

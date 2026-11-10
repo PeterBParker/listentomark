@@ -30,3 +30,10 @@ export interface Track {
   prevHref?: string;
   nextHref?: string;
 }
+
+/** One row of the "quotes" table. */
+export interface Quote {
+  text: string;
+  source: string | null;
+  reason: string | null;
+}
