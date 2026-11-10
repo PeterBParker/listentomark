@@ -1,22 +1,15 @@
 import type { Sermon } from "./types";
 
 /**
- * Google Drive fallback used when audio_url fails to load.
+ * Audio sources to try in order: the church CDN (audio_url), then the Google
+ * Drive copy (backup_audio_loc, filled in by `npm run drive:links`).
  *
- * TODO: sermons.json doesn't include Drive links yet. Once they exist, map
- * sermon -> Drive file ID here (e.g. from a lookup keyed by file_name) and return
- *   `https://drive.google.com/uc?export=download&id=${fileId}`
+ * The Drive copy is played through /api/audio/[id], because browsers block
+ * Drive download links on other sites (see app/api/audio/[id]/route.ts).
  */
-const DRIVE_FILE_IDS: Record<string, string> = {
-  // "2019-08-25_The-Plankton-Prophet.mp3": "<google-drive-file-id>",
-};
-
-export function getFallbackAudioUrl(sermon: Pick<Sermon, "file_name">): string | null {
-  const id = DRIVE_FILE_IDS[sermon.file_name];
-  return id ? `https://drive.google.com/uc?export=download&id=${encodeURIComponent(id)}` : null;
-}
-
-/** Audio sources to try in order. */
-export function audioSources(sermon: Sermon): string[] {
-  return [sermon.audio_url, getFallbackAudioUrl(sermon)].filter((u): u is string => !!u);
+export function audioSources(sermon: Pick<Sermon, "id" | "audio_url" | "backup_audio_loc">): string[] {
+  const sources: string[] = [];
+  if (sermon.audio_url) sources.push(sermon.audio_url);
+  if (sermon.backup_audio_loc) sources.push(`/api/audio/${sermon.id}`);
+  return sources;
 }

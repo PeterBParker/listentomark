@@ -8,6 +8,7 @@ export interface Sermon {
   speaker: string | null;
   page_url: string | null;
   audio_url: string | null;
+  backup_audio_loc: string | null; // Google Drive direct download URL
 }
 
 export interface SearchParams {

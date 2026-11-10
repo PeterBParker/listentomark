@@ -34,10 +34,19 @@ All pages are server-rendered; the player, play buttons and tab bar are the only
 ## Data
 
 - `data/sermons.json` – source data.
-- `data/sermons.db` – SQLite database with a single `sermons` table; one row per JSON item, columns named after the JSON keys (rows are addressed by SQLite's `rowid`).
+- `data/sermons.db` – SQLite database with a single `sermons` table; one row per JSON item, columns named after the JSON keys, including `backup_audio_loc` (rows are addressed by SQLite's `rowid`).
 - Rebuild the DB after editing the JSON: `just import-db` (runs `scripts/import-sermons.mjs`).
 
 ## Audio fallback
 
-The player tries `audio_url` first. If it fails to load, it falls back to a Google Drive link from `lib/audio.ts`.
-The JSON doesn't contain Drive links yet, so add `file_name → Drive file ID` entries to `DRIVE_FILE_IDS` there.
+The player tries `audio_url` (church CDN) first. If that fails it plays the Google Drive copy stored in
+`backup_audio_loc`, through `/api/audio/[id]`: browsers can't play Drive links directly from another site
+(Drive returns 403 with `Cross-Origin-Resource-Policy: same-site`), so the app's server fetches the file
+and streams it, passing range requests through so seeking works.
+
+`backup_audio_loc` comes from the public Drive folder. When sermons are added (matching on `file_name`):
+
+```bash
+npm run drive:links   # read the Drive folder, write backup_audio_loc into data/sermons.json
+just import-db        # rebuild data/sermons.db
+```

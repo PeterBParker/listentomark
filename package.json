@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "db:import": "node scripts/import-sermons.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "drive:links": "node scripts/fetch-drive-links.mjs"
   },
   "dependencies": {
     "fuse.js": "^7.5.0",

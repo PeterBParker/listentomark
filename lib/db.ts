@@ -17,7 +17,7 @@ function db(): DatabaseSync {
 // node:sqlite returns null-prototype rows; copy them into plain objects.
 const plain = (row: unknown) => ({ ...(row as Sermon) });
 
-const SELECT = "SELECT rowid AS id, file_name, date, title, series, speaker, page_url, audio_url FROM sermons";
+const SELECT = "SELECT rowid AS id, file_name, date, title, series, speaker, page_url, audio_url, backup_audio_loc FROM sermons";
 
 /** All sermons, newest first. */
 export function listSermons(): Sermon[] {
