@@ -40,7 +40,7 @@ export default function PlayerView({ track: urlTrack, fallback }: { track?: Trac
   return (
     <div className="player">
       <div className="now-playing">
-        <h1>{shown.title}</h1>
+        <h2>{shown.title}</h2>
         <p>{shown.subtitle}</p>
       </div>
 

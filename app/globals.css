@@ -73,8 +73,8 @@ details[open] .chevron { transform: rotate(90deg); }
 
 /* Player */
 .player { display: grid; gap: 24px; padding-top: 8px; }
-.now-playing { padding-top: 16px; }
-.now-playing h1 { font-size: 1.5rem; margin: 0 0 6px; }
+.now-playing { padding-top: 12px; }
+.now-playing h2 { font-size: 1.25rem; margin: 0 0 6px; }
 .now-playing p { margin: 0; color: var(--muted); }
 .progress input { width: 100%; accent-color: var(--accent); }
 .times { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.8rem; }

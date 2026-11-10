@@ -14,22 +14,24 @@ export default async function PlayerPage({ searchParams }: Props) {
   const rawId = Array.isArray(sp.id) ? sp.id[0] : sp.id;
   const sermon = rawId ? getSermon(Number(rawId)) : undefined;
 
-  if (rawId && !sermon) {
-    return (
-      <p className="empty">
-        Sermon not found. <Link href="/">Back to the archive</Link>
-      </p>
-    );
-  }
-
   // No id: the client shows whatever is loaded, falling back to the newest sermon.
   const latest = listSermons()[0];
-  if (!sermon && !latest) return <p className="empty">No sermons yet.</p>;
 
   return (
-    <PlayerView
-      track={sermon && buildTrack(sermon, ctx)}
-      fallback={buildTrack(sermon ?? latest, { kind: "archive" })}
-    />
+    <>
+      <h1 className="page-title">Player</h1>
+      {rawId && !sermon ? (
+        <p className="empty">
+          Sermon not found. <Link href="/">Back to the archive</Link>
+        </p>
+      ) : !sermon && !latest ? (
+        <p className="empty">No sermons yet.</p>
+      ) : (
+        <PlayerView
+          track={sermon && buildTrack(sermon, ctx)}
+          fallback={buildTrack((sermon ?? latest)!, { kind: "archive" })}
+        />
+      )}
+    </>
   );
 }
