@@ -26,6 +26,9 @@ position while you move between Archive, Search and Player. A sermon only starts
 in a list; opening the Player tab (or using back/forward) never starts or restarts audio. When a sermon ends,
 the next one in the same archive/search order plays, even if you're on another page.
 
+The loaded sermon and its position are saved in `localStorage` (`lib/savedProgress.ts`), so after a refresh
+the player comes back on the same sermon at the same spot, paused.
+
 All pages are server-rendered; the player, play buttons and tab bar are the only client components.
 
 ## Data

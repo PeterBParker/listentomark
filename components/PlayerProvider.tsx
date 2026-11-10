@@ -1,6 +1,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useCallback, useContext, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { loadProgress, saveProgress } from "@/lib/savedProgress";
 import type { Track } from "@/lib/types";
 
 interface PlayerState {
@@ -42,11 +43,37 @@ export default function PlayerProvider({ children }: { children: React.ReactNode
   const [error, setError] = useState<string | null>(null);
   const [srcIndex, setSrcIndex] = useState(0);
   const wantPlay = useRef(false); // should playback continue after a source switch?
+  const resumeAt = useRef(0); // position to seek to once a restored track's metadata loads
+  const lastSaved = useRef(0);
+
+  // Restore the sermon and position from before a refresh. It comes back paused.
+  useEffect(() => {
+    const saved = loadProgress();
+    const el = audio.current;
+    if (!saved || !el || !saved.track.sources[0]) return;
+    setCurrent(saved.track);
+    setTime(saved.time);
+    resumeAt.current = saved.time;
+    el.src = saved.track.sources[0];
+  }, []);
+
+  // Save the position regularly while playing, and when the page is hidden/closed.
+  const persist = useCallback(() => {
+    const el = audio.current;
+    if (current && el && !resumeAt.current) saveProgress(current, el.currentTime);
+  }, [current]);
+  useEffect(() => {
+    window.addEventListener("pagehide", persist);
+    return () => window.removeEventListener("pagehide", persist);
+  }, [persist]);
 
   const load = useCallback((track: Track, autoplay: boolean) => {
     const el = audio.current;
     if (!el) return;
     setCurrent(track);
+    saveProgress(track, 0);
+    resumeAt.current = 0;
+    lastSaved.current = 0;
     setSrcIndex(0);
     setError(null);
     setTime(0);
@@ -144,13 +171,36 @@ export default function PlayerProvider({ children }: { children: React.ReactNode
           setPlaying(true);
         }}
         onPause={() => {
+          persist();
           wantPlay.current = false;
           setPlaying(false);
         }}
-        onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
-        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+        onTimeUpdate={(e) => {
+          const t = e.currentTarget.currentTime;
+          if (resumeAt.current && t < 1) return; // ignore the 0 reported before a restore seek
+          if (resumeAt.current) resumeAt.current = 0; // playing on from somewhere else
+          setTime(t);
+          if (Math.abs(t - lastSaved.current) >= 5) {
+            lastSaved.current = t;
+            persist();
+          }
+        }}
+        onLoadedMetadata={(e) => {
+          const el = e.currentTarget;
+          setDuration(el.duration);
+          if (resumeAt.current) el.currentTime = Math.min(resumeAt.current, el.duration || resumeAt.current);
+        }}
+        onSeeked={(e) => {
+          // A restore seek counts once it lands; until then keep the saved position.
+          if (resumeAt.current && Math.abs(e.currentTarget.currentTime - resumeAt.current) < 2) resumeAt.current = 0;
+          persist();
+        }}
         onDurationChange={(e) => setDuration(e.currentTarget.duration)}
-        onEnded={() => void skip("next", true)}
+        onEnded={() => {
+          // Finished the last one in the list: next time, start it from the beginning.
+          if (current && !current.nextHref) saveProgress(current, 0);
+          void skip("next", true);
+        }}
         onError={onError}
       />
     </PlayerContext.Provider>
