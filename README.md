@@ -34,7 +34,10 @@ All pages are server-rendered; the player, play buttons and tab bar are the only
 ## Data
 
 - `data/sermons.json` – source data.
-- `data/sermons.db` – SQLite database with a single `sermons` table; one row per JSON item, columns named after the JSON keys, including `backup_audio_loc` (rows are addressed by SQLite's `rowid`).
+- `data/sermons.db` – SQLite database with a single `sermons` table; one row per JSON item, columns named after the JSON keys, including `backup_audio_loc`.
+- `id` is each sermon's permanent number, used in links (`/player?id=…`) and saved player positions. Leave it out
+  when adding a sermon: `just import-db` assigns the next unused id and writes it back to the JSON. Ids are never
+  renumbered or reused, so delete a sermon by removing its entry and rebuilding.
 - Rebuild the DB after editing the JSON: `just import-db` (runs `scripts/import-sermons.mjs`).
 
 ## Audio fallback

@@ -1,6 +1,6 @@
 /** One row of the "sermons" table. Columns mirror the keys in data/sermons.json. */
 export interface Sermon {
-  id: number; // SQLite rowid
+  id: number; // permanent id (from sermons.json)
   file_name: string;
   date: string; // YYYY-MM-DD
   title: string;
