@@ -38,7 +38,7 @@ main { max-width: 720px; margin: 0 auto; padding: 0 16px 32px; }
 
 /* Header */
 .site-header {
-  position: relative;
+  position: relative; height: 56px; /* fixed: the photo's closed position is measured from it */
   max-width: 720px; margin: 0 auto; padding: 18px 16px 10px;
   display: flex; align-items: center; gap: 10px;
 }
@@ -48,16 +48,26 @@ main { max-width: 720px; margin: 0 auto; padding: 0 16px 32px; }
   letter-spacing: 0.005em; color: var(--text);
 }
 /* Photo in the empty top-right corner, beside the site name and page heading.
-   Absolutely positioned so it doesn't push the page down. The button tilts
-   slowly the whole time; tapping wiggles the photo inside it on top of that
-   (components/HeaderPhoto.tsx), so the tilt never restarts. */
+   It hangs from .photo-anchor, which sits just below the quote bubble
+   (components/SiteHeader.tsx). Closed, it's pulled up beside the title row
+   (10px from the page top = 56px header - 46px); open, it drops under the
+   bubble's tail and the anchor grows so the photo doesn't cover the page.
+   The button tilts slowly the whole time; tapping wiggles the photo inside
+   it on top of that, so the tilt never restarts. */
+.photo-anchor {
+  position: relative; max-width: 720px; margin: 0 auto;
+  height: 0; transition: height 0.45s ease;
+}
+.photo-anchor.open { height: 52px; } /* photo bottom moves from 38px to 90px below the anchor */
 .header-photo {
-  position: absolute; top: 10px; right: 16px; z-index: 1;
+  position: absolute; top: -46px; right: 16px; z-index: 1;
+  transition: top 0.45s ease;
   width: 66px; padding: 0; border: 0; background: none; cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transform-origin: 50% 90%; /* pivot near the chin, like tilting a head */
   animation: head-tilt 3.2s ease-in-out infinite alternate;
 }
+.photo-anchor.open .header-photo { top: 6px; }
 .header-photo img {
   display: block; width: 100%; height: auto;
   transform-origin: 50% 90%;
@@ -80,9 +90,9 @@ main { max-width: 720px; margin: 0 auto; padding: 0 16px 32px; }
 @media (prefers-reduced-motion: reduce) {
   .header-photo, .header-photo img.wiggle { animation: none; }
 }
-/* Quote speech bubble (components/SiteHeader.tsx). The area above the header
-   grows from 0 to the bubble's height (grid 0fr -> 1fr); the tail points down
-   at the photo, which sits 49px in from the right of the header. */
+/* Quote speech bubble (components/SiteHeader.tsx), below the title row. The
+   area grows from 0 to the bubble's height (grid 0fr -> 1fr); the tail points
+   down at the photo, which sits 49px in from the right. */
 .quote-area {
   display: grid; grid-template-rows: 0fr; opacity: 0;
   max-width: 720px; margin: 0 auto;
@@ -111,7 +121,7 @@ main { max-width: 720px; margin: 0 auto; padding: 0 16px 32px; }
 }
 .quote-close:hover { background: var(--surface-sunk); color: var(--text); }
 @media (prefers-reduced-motion: reduce) {
-  .quote-area { transition: none; }
+  .quote-area, .photo-anchor, .header-photo { transition: none; }
 }
 .page-title {
   font-family: var(--font-serif); font-weight: 600; font-size: 2rem; line-height: 1.2;

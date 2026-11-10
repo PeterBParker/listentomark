@@ -9,8 +9,9 @@ const WINDOW_MS = 5000;
 
 /**
  * Site header. Tapping the photo three times within five seconds opens a
- * speech bubble above the header, with its tail pointing at the photo, showing
- * a random row from the quotes table.
+ * speech bubble below the "Listen To Mark" row, showing a random row from the
+ * quotes table. The photo slides down beneath the bubble's tail so it looks
+ * like it's speaking.
  */
 export default function SiteHeader() {
   const taps = useRef<number[]>([]);
@@ -37,6 +38,11 @@ export default function SiteHeader() {
 
   return (
     <>
+      {/* The title row always stays at the top of the page. */}
+      <header className="site-header">
+        <BibleIcon size={26} className="brand-icon" />
+        <span className="brand">Listen To Mark</span>
+      </header>
       <div className={open ? "quote-area open" : "quote-area"} aria-live="polite" inert={!open}>
         <div className="quote-clip">
           <div className="quote-pad">
@@ -60,11 +66,11 @@ export default function SiteHeader() {
           </div>
         </div>
       </div>
-      <header className="site-header">
-        <BibleIcon size={26} className="brand-icon" />
-        <span className="brand">Listen To Mark</span>
+      {/* The photo hangs from here, just below the bubble, so it moves down
+          with the bubble and stays under its tail. */}
+      <div className={open ? "photo-anchor open" : "photo-anchor"}>
         <HeaderPhoto onTap={onPhotoTap} />
-      </header>
+      </div>
     </>
   );
 }
